@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tigre Juliano Slot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFD700;
+            color: #000;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        #slot-machine {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+        .slot {
+            width: 100px;
+            height: 100px;
+            font-size: 60px;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #saldo {
+            margin: 20px;
+            font-size: 30px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+        }
+        button {
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 24px;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            display: none;
+            font-size: 30px;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        #pix-panel {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        #pix-key {
+            margin-top: 10px;
+            font-size: 20px;
+            background-color: #e7f3fe;
+            border: 1px solid #b3d7ff;
+            width: 100%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Slot Tigre Juliano</h1>
+
+<div id="slot-machine">
+    <div class="slot" id="slot1"></div>
+    <div class="slot" id="slot2"></div>
+    <div class="slot" id="slot3"></div>
+    <div class="slot" id="slot4"></div>
+    <div class="slot" id="slot5"></div>
+    <div class="slot" id="slot6"></div>
+    <div class="slot" id="slot7"></div>
+    <div class="slot" id="slot8"></div>
+    <div class="slot" id="slot9"></div>
+</div>
+
+<div id="saldo">Saldo: R$ <span id="saldo-valor">100</span></div>
+<div class="control-panel">
+    <label for="valor-partida">Escolha o valor da partida: R$ </label>
+    <input type="number" id="valor-partida" value="10" min="1">
+    <button id="jogar">Jogar</button>
+</div>
+
+<div id="result"></div>
+
+<div id="pix-panel">
+    <h3>Painel de Depósito</h3>
+    <p>Insira o valor que deseja depositar:</p>
+    <input type="number" id="deposito-valor" placeholder="Valor para depositar" min="1">
+    <button id="depositei">Depositar</button>
+    <p>Chave Pix gerada:</p>
+    <input type="text" id="pix-key" placeholder="Chave Pix" readonly>
+    <p>Copie essa chave Pix e faça o pagamento.</p>
+    <button id="confirmar" style="display: none;">Confirmar Depósito</button>
+</div>
+
+<script>
+    const emojis = ['🪙', '🐯', '🍊'];
+    const multiplicadores = {
+        '🪙': 1.5,
+        '🐯': 8,
+        '🍊': 4
+    };
+
+    let saldo = 100;
+
+    document.getElementById('jogar').addEventListener('click', () => {
+        const valorPartida = parseFloat(document.getElementById('valor-partida').value);
+        if (saldo < valorPartida) {
+            alert("Saldo insuficiente!");
+            return;
+        }
+
+        saldo -= valorPartida;
+        document.getElementById('saldo-valor').innerText = saldo;
+
+        // Animação de rotação
+        const slots = [];
+        let animacao = setInterval(() => {
+            for (let i = 1; i <= 9; i++) {
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                document.getElementById('slot' + i).innerText = emoji;
+            }
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(animacao);
+            // Gera os slots finais
+            for (let i = 1; i <= 9; i++) {
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                slots.push(emoji);
+                document.getElementById('slot' + i).innerText = emoji;
+            }
+            const ganho = calcularGanho(slots, valorPartida);
+            mostrarResultado(ganho, slots);
+        }, 2000); // 2 segundos de animação
+    });
+
+    document.getElementById('depositei').addEventListener('click', () => {
+        const valorDeposito = parseFloat(document.getElementById('deposito-valor').value);
+        if (valorDeposito > 0) {
+            const chavePix = '12456'; // Chave Pix fixa
+            document.getElementById('pix-key').value = chavePix;
+            alert(`Chave Pix gerada: ${chavePix}. Copie essa chave e faça o pagamento.`);
+            document.getElementById('confirmar').style.display = 'block'; // Exibe o botão confirmar
+        } else {
+            alert("Por favor, insira um valor válido para o depósito.");
+        }
+    });
+
+    document.getElementById('confirmar').addEventListener('click', () => {
+        const valorDeposito = parseFloat(document.getElementById('deposito-valor').value);
+        if (valorDeposito > 0) {
+            saldo += valorDeposito;
+            document.getElementById('saldo-valor').innerText = saldo; // Atualiza o saldo exibido
+            alert(`Depósito de R$ ${valorDeposito} realizado com sucesso!`);
+            document.getElementById('confirmar').style.display = 'none'; // Esconde o botão confirmar após uso
+            document.getElementById('deposito-valor').value = ''; // Limpa o valor do depósito
+            document.getElementById('pix-key').value = ''; // Limpa a chave Pix
+        } else {
+            alert("Por favor, insira um valor válido para o depósito.");
+        }
+    });
+
+    function calcularGanho(slots, valorPartida) {
+        let ganho = 0;
+
+        // Verifica linhas horizontais
+        for (let i = 0; i < 9; i += 3) {
+            if (slots[i] === slots[i + 1] && slots[i] === slots[i + 2]) {
+                ganho += multiplicadores[slots[i]] * valorPartida;
+            }
+        }
+
+        // Verifica linhas verticais
+        for (let i = 0; i < 3; i++) {
+            if (slots[i] === slots[i + 3] && slots[i] === slots[i + 6]) {
+                ganho += multiplicadores[slots[i]] * valorPartida;
+            }
+        }
+
+        // Verifica diagonais
+        if (slots[0] === slots[4] && slots[0] === slots[8]) {
+            ganho += multiplicadores[slots[0]] * valorPartida;
+        }
+        if (slots[2] === slots[4] && slots[2] === slots[6]) {
+            ganho += multiplicadores[slots[2]] * valorPartida;
+        }
+
+        return ganho;
+    }
+
+    function mostrarResultado(ganho, slots) {
+        const resultado = document.getElementById('result');
+        resultado.style.display = 'block';
+        resultado.innerText = ganho > 0 ? `Você ganhou: R$ ${ganho.toFixed(2)}` : 'Você não ganhou desta vez.';
+    }
+</script>
+
+</body>
+</html>
+
